@@ -1,2 +1,2 @@
-# who_works
-Web version of Who Works App for tracking current people working status &amp; API
+# Who Works API
+API for Who Works App for tracking current people working status
