@@ -18,6 +18,9 @@ gem 'puma'
 # Use postgresql as the database for Active Record
 gem 'pg'
 gem 'connection_pool'
+
+gem 'bcrypt', '~> 3.1.7'
+
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
