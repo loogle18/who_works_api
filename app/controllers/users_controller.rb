@@ -6,7 +6,12 @@ class UsersController < ApplicationController
 
   def create
     @user = User.new(new_user_params)
-    @user.save
+
+    if @user.save
+      render json: @user
+    else
+      render json: @user.errors.full_messages, status: 406
+    end
   end
 
   def auth
