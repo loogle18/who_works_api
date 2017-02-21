@@ -1,14 +1,14 @@
 class UsersController < ApplicationController
   def index
     @users = User.all
-    render json: @users.order(:login)
+    render json: @users.order(:login).as_json(except: columns_to_exclude)
   end
 
   def create
     @user = User.new(new_user_params)
 
     if @user.save
-      render json: @user
+      render json: @user.as_json(except: columns_to_exclude)
     else
       render json: @user.errors.full_messages, status: 406
     end
@@ -17,11 +17,10 @@ class UsersController < ApplicationController
   def auth
     email = auth_user_param[:email]
     password = auth_user_param[:password]
-    user = User.find_by(email: email)
 
-    if user.present?
-      if valid_password?(user, password)
-        render json: user
+    if @user = User.find_by(email: email)
+      if valid_password?(@user, password)
+        render json: @user.as_json(except: columns_to_exclude)
       else
         render nothing: true, status: 401
       end
@@ -31,6 +30,10 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def columns_to_exclude
+    %i(password_digest created_at updated_at)
+  end
 
   def valid_password?(user, password)
     current_password = BCrypt::Password.new(user.password_digest)
