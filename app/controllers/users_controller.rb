@@ -29,6 +29,22 @@ class UsersController < ApplicationController
     end
   end
 
+  def update_status
+    id = status_code_params[:id]
+    status_code = status_code_params[:status_code]
+    @user = User.find_by(id: id)
+
+    if @user && status_code
+      if User::VALID_STATUS_CODES.include? status_code.to_i
+        @user.update_column(:status_code, status_code)
+      else
+        render json: 'Invalid status code!', status: 406
+      end
+    else
+      render nothing: true, status: 404
+    end
+  end
+
   private
 
   def columns_to_exclude
@@ -46,5 +62,9 @@ class UsersController < ApplicationController
 
   def new_user_params
     params.require(:user).permit(:login, :email, :password, :status_code, :status, :full_name, :avatar)
+  end
+
+  def status_code_params
+    params.require(:user).permit(:id, :status_code)
   end
 end

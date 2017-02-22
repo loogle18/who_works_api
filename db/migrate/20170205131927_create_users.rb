@@ -4,7 +4,7 @@ class CreateUsers < ActiveRecord::Migration[5.0]
       t.string :login
       t.string :email
       t.string :password_digest
-      t.integer :status_code
+      t.integer :status_code, default: 2
       t.string :status
       t.string :avatar
       t.string :full_name

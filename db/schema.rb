@@ -20,12 +20,12 @@ ActiveRecord::Schema.define(version: 20170205131927) do
     t.string   "login"
     t.string   "email"
     t.string   "password_digest"
-    t.integer  "status_code"
+    t.integer  "status_code",     default: 2
     t.string   "status"
     t.string   "avatar"
     t.string   "full_name"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
   end
 
 end
