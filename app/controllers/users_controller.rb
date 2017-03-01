@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+  before_action :find_user, only: %i(update update_status)
+
   def index
     @users = User.all
     render json: @users.order(:login).as_json(except: columns_to_exclude)
@@ -12,6 +14,33 @@ class UsersController < ApplicationController
     else
       render json: @user.errors.full_messages, status: 406
     end
+  end
+
+  def update
+    if @user.update(update_user_params)
+      render nothing: true, status: 200
+    else
+      render json: @user.errors.full_messages, status: 406
+    end
+  end
+
+  def update_status
+    status_code = status_code_params[:status_code]
+
+    if @user && status_code
+      if User::VALID_STATUS_CODES.include? status_code.to_i
+        @user.update_column(:status_code, status_code)
+      else
+        render json: 'Invalid status code!', status: 406
+      end
+    else
+      render nothing: true, status: 404
+    end
+  end
+
+  def destroy
+    @user = User.find(params[:id])
+    @user.destroy
   end
 
   def auth
@@ -29,23 +58,11 @@ class UsersController < ApplicationController
     end
   end
 
-  def update_status
-    id = status_code_params[:id]
-    status_code = status_code_params[:status_code]
-    @user = User.find_by(id: id)
-
-    if @user && status_code
-      if User::VALID_STATUS_CODES.include? status_code.to_i
-        @user.update_column(:status_code, status_code)
-      else
-        render json: 'Invalid status code!', status: 406
-      end
-    else
-      render nothing: true, status: 404
-    end
-  end
-
   private
+
+  def find_user
+    @user ||= User.find(params[:user][:id])
+  end
 
   def columns_to_exclude
     %i(password_digest created_at updated_at)
@@ -62,6 +79,10 @@ class UsersController < ApplicationController
 
   def new_user_params
     params.require(:user).permit(:login, :email, :password, :status_code, :status, :full_name, :avatar)
+  end
+
+  def update_user_params
+    params.require(:user).permit(:login, :full_name, :status, :password)
   end
 
   def status_code_params
